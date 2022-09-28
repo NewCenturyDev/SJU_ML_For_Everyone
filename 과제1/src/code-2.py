@@ -48,8 +48,8 @@ def descent(df, w_new, w_prev, learning_rate):
         w1 = w_prev[1] - learning_rate * grad(w_prev, df["x1"], df["x2"], df["y"])[1]
         w2 = w_prev[2] - learning_rate * grad(w_prev, df["x1"], df["x2"], df["y"])[2]
         w_new = [w0, w1, w2]
-        print(w_new)
-        print(cost(w_new, df["x1"], df["x2"], df["y"]))
+        print("New parameter (w0, w1, w2): " + str(w_new))
+        print("Cost of this w: " + str(cost(w_new, df["x1"], df["x2"], df["y"])))
         print("==================== End-" + str(iter_cnt) + " ===================")
 
         # 추가적인 경사하강을 하여도 w값들의 차이가 10^-6 이하로 변동이 매우 작다면 학습을 중지하고 파라미터값을 반환한다
@@ -86,7 +86,7 @@ def machine_learn(df, label, learning_rate):
     print(ideal_w)
 
     # 학습을 통해 도출한 경계선을 그래프에 그린다
-    x = np.array(range(-1, 1))
+    x = np.array(range(-1, 2))
     y = (-ideal_w[0] - ideal_w[1] * x) / ideal_w[2]
     plt.plot(x, y)
 
@@ -125,7 +125,7 @@ for i in range(m):
         plt.scatter(dfAll["x1"][i], dfAll["x2"][i], s=10, c=colors["Canadian"])
 
 # 분할된 3개의 이진분류 문제를 학습시키고 각각의 그래프(분류경계선)을 한 좌표평면에 그린다
-learningRate = 0.005
+learningRate = 0.1
 machine_learn(dfKama, "Kama", learningRate)
 machine_learn(dfRosa, "Rosa", learningRate)
 machine_learn(dfCanadian, "Canadian", learningRate)

@@ -66,8 +66,8 @@ def descent(df, w_new, w_prev, learning_rate):
 def label_to_true_or_false(label, label_column):
     # 예를 들어 label에 Kama를 넣어준다면, Kama가 아닌지에 대해 One-vs-All 방식을 사용하여 y값을 0 or 1로 확정
     y_data_column = []
-    for i in range(m):
-        if float(label in label_column[i]):
+    for idx in range(m):
+        if float(label in label_column[idx]):
             y_data_column.append(1.0)
         else:
             y_data_column.append(0.0)

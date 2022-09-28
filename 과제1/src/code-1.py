@@ -54,4 +54,4 @@ print(x2NormalizedList)
 print(resultDf)
 
 # CSV에 작성한다
-resultDf.to_csv("data2.csv", sep=",", na_rep="NaN", index=False)
+resultDf.to_csv("data_normalized.csv", sep=",", na_rep="NaN", index=False)

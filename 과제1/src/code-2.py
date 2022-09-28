@@ -56,15 +56,15 @@ def descent(df, w_new, w_prev, learning_rate):
         if (w_new[0] - w_prev[0]) ** 2 + (w_new[1] - w_prev[1]) ** 2 + (w_new[2] - w_prev[2]) ** 2 < pow(10, -6):
             return w_new
 
-        # 반복횟수가 1000회를 초과할 경우 반환한다
-        # if iter_cnt >= 1000:
-        #     return w_new
+        # 무한루프 오류 방지를 위해 반복횟수가 1000000회를 초과할 경우 반환한다
+        if iter_cnt >= 1000000:
+            return w_new
         iter_cnt += 1
 
 
 # Y값을 1 또는 0으로 변환시키는 함수이다 (특정 라벨에 해당하면 1, 해당하지 않으면 0)
 def label_to_true_or_false(label, label_column):
-    # 예를 들어 label에 Kuma를 넣어준다면, Kuma가 아닌지에 대해 One-vs-All 방식을 사용하여 y값을 0 or 1로 확정
+    # 예를 들어 label에 Kama를 넣어준다면, Kama가 아닌지에 대해 One-vs-All 방식을 사용하여 y값을 0 or 1로 확정
     y_data_column = []
     for i in range(m):
         if float(label in label_column[i]):
@@ -74,19 +74,19 @@ def label_to_true_or_false(label, label_column):
     return y_data_column
 
 
-# One-vs-All 방식을 적용하여 Kuma, Rosa, Canadian을 분류하는 문제를
+# One-vs-All 방식을 적용하여 Kama, Rosa, Canadian을 분류하는 문제를
 # 3개의 하위 문제로 분할하여 로지스틱 회귀와 경사하강법을 이용한 학습 및 경계선 도출
-def machine_learn(df, label):
+def machine_learn(df, label, learning_rate):
     # 파라미터 초기값 설정
     initial_w = [0, 1, 1]
 
     # 학습 시작
-    ideal_w = descent(initial_w, initial_w, 0.001)
+    ideal_w = descent(df, initial_w, initial_w, learning_rate)
     print("RESULT: Ideal_w of " + label + " is")
     print(ideal_w)
 
     # 학습을 통해 도출한 경계선을 그래프에 그린다
-    x = np.array(range(-2, 2))
+    x = np.array(range(-1, 1))
     y = (-ideal_w[0] - ideal_w[1] * x) / ideal_w[2]
     plt.plot(x, y)
 
@@ -109,23 +109,26 @@ m = len(x1DataColumn)  # 학습 데이터 개수
 # 데이터프레임으로 변환 (그래프에 데이터 표출용)
 dfAll = pd.DataFrame(dict(x1=x1DataColumn, x2=x2DataColumn, label=yLabelColumn))
 
-# 데이터프레임으로 변환 (각 Kuma인 것과 아닌것에 대한 문제, Rosa인 것과 아닌것에 대한 문제, Canadian인 것과 아닌것에 관한 문제 학습용)
-dfKuma = pd.DataFrame(dict(x1=x1DataColumn, x2=x2DataColumn, y=label_to_true_or_false("Kuma", yLabelColumn)))
+# 데이터프레임으로 변환 (각 Kama인 것과 아닌것에 대한 문제, Rosa인 것과 아닌것에 대한 문제, Canadian인 것과 아닌것에 관한 문제 학습용)
+dfKama = pd.DataFrame(dict(x1=x1DataColumn, x2=x2DataColumn, y=label_to_true_or_false("Kama", yLabelColumn)))
 dfRosa = pd.DataFrame(dict(x1=x1DataColumn, x2=x2DataColumn, y=label_to_true_or_false("Rosa", yLabelColumn)))
 dfCanadian = pd.DataFrame(dict(x1=x1DataColumn, x2=x2DataColumn, y=label_to_true_or_false("Canadian", yLabelColumn)))
 
 # 데이터들을 좌표평면 위에 표시한다
-colors = {"Kuma": 'red', "Rosa": 'green', "Canadian": 'blue'}
-fig, ax = plt.subplots()
-grouped = dfAll.groupby('label')
-
-for key, group in grouped:
-    group.plot(ax=ax, kind='scatter', x='x1', y='x2', label=key, color=colors[key])
+colors = {'Kama': 'red', 'Rosa': 'green', 'Canadian': 'blue'}
+for i in range(m):
+    if "Kama" in dfAll["label"][i]:
+        plt.scatter(dfAll["x1"][i], dfAll["x2"][i], s=10, c=colors["Kama"])
+    elif "Rosa" in dfAll["label"][i]:
+        plt.scatter(dfAll["x1"][i], dfAll["x2"][i], s=10, c=colors["Rosa"])
+    elif "Canadian" in dfAll["label"][i]:
+        plt.scatter(dfAll["x1"][i], dfAll["x2"][i], s=10, c=colors["Canadian"])
 
 # 분할된 3개의 이진분류 문제를 학습시키고 각각의 그래프(분류경계선)을 한 좌표평면에 그린다
-machine_learn(dfKuma, "Kuma")
-machine_learn(dfRosa, "Rosa")
-machine_learn(dfCanadian, "Canadian")
+learningRate = 0.005
+machine_learn(dfKama, "Kama", learningRate)
+machine_learn(dfRosa, "Rosa", learningRate)
+machine_learn(dfCanadian, "Canadian", learningRate)
 
 # 그래프 라벨을 표시하고 그래프 결과를 표출한다
 plt.xlabel('x1: Normalized X1 kernel_area')
